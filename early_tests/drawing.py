@@ -18,8 +18,8 @@ cap = cv2.VideoCapture(0)
 prev_x, prev_y = None, None
 canvas = None
 
-pen_down = False  # czy aktualnie rysujemy
-threshold = 0.1  # próg odległości kciuk–wskazujący (0–1)
+pen_down = False  
+threshold = 0.1  
 threshold_rst = 0.1
 while True:
     ret, frame = cap.read()
@@ -39,7 +39,7 @@ while True:
         hand_landmarks = result.multi_hand_landmarks[0]
         mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-        # Landmarki: kciuk TIP (4), wskazujący TIP (8)
+        
         thumb_tip = hand_landmarks.landmark[4]
         index_tip = hand_landmarks.landmark[8]
         middle_tip = hand_landmarks.landmark[12]
@@ -47,35 +47,35 @@ while True:
         pinky_tip = hand_landmarks.landmark[20]
         wrist = hand_landmarks.landmark[0]
 
-        # Współrzędne znormalizowane (0–1)
+        
         tx, ty = thumb_tip.x, thumb_tip.y
         ix, iy = index_tip.x, index_tip.y
 
-        # Odległość euklidesowa w przestrzeni 2D (0–1)
+       
         dist = math.sqrt((tx - ix) ** 2 + (ty - iy) ** 2)
 
         dist_rst = math.sqrt((middle_tip.x - wrist.x) ** 2 + (middle_tip.y - wrist.y) ** 2)
-        # Logika pisaka
+        
         if dist < threshold:
-            # Palce blisko siebie -> pisak w dół
+            
             new_pen_down = True
         else:
-            # Palce daleko -> pisak w górę
+            
             new_pen_down = False
 
         if(dist_rst) < threshold_rst:
             canvas = np.zeros_like(frame)
         
-        # Jeśli właśnie podnieśliśmy pisak -> zerujemy poprzedni punkt
+        
         if pen_down and not new_pen_down:
             prev_x, prev_y = None, None
 
         pen_down = new_pen_down
 
-        # Współrzędne palca wskazującego w pikselach
+        
         cx, cy = int(ix * w), int(iy * h)
 
-        # Rysuj tylko jeśli pen_down == True
+        
         if pen_down:
             if prev_x is not None and prev_y is not None:
                 cv2.line(canvas, (prev_x, prev_y), (cx, cy), (255, 255, 255), 5)
@@ -83,11 +83,11 @@ while True:
         else:
             prev_x, prev_y = None, None
 
-        # Wizualizacja pisaka (czerwony / zielony)
+        
         color = (0, 255, 0) if pen_down else (0, 0, 255)
         cv2.circle(frame, (cx, cy), 7, color, -1)
 
-        # Debug info
+        
         cv2.putText(frame, f"dist={dist:.3f}", (10, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
     else:

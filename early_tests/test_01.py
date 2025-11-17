@@ -19,13 +19,10 @@ while True:
             # Rysowanie landmarków
             mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-            # Tutaj odczytujesz współrzędne
+            
             for id, lm in enumerate(hand_landmarks.landmark):
                 h, w, c = frame.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
-
-                # w razie czego możesz tu dodać rysowanie punktów
-                #cv2.circle(frame, (cx, cy), 4, (0, 255, 0), -1)
 
                 # debug print
                 print(id, cx, cy)

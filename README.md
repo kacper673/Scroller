@@ -14,4 +14,12 @@ for scroll up gesture place your hand in top half of your screen and make a scro
 
 for swipe left gesture place your right hand in right hlaf of the screen and start swiping left with your index finger. Analogicly for swipe left.
 
+for mouse drag you have to hold your index and thumb together
+
+for open you have to open your palm fully
+
+for close you have to close your palm twice rapidly
+
+
+
 **UNFINISHED PROJECT**

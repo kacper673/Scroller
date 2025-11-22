@@ -4,22 +4,25 @@ import time
 
 class GestureClassifier:
 
-    def __init__(self, close_threshold=0.1,open_threshold = 0.13,debug: bool = False): 
+    def __init__(self, close_threshold=0.1,open_threshold = 0.11,debug: bool = False): 
 
         self.close_threshold = close_threshold
         self.open_threshold = open_threshold
 
-        self.scroll_dt = 1
+        self.scroll_dt = 0.8
         self.scroll_down_start = None
         self.scroll_up_start = None
 
         self.swipe_left_start = None
         self.swipe_right_start = None
 
+        self.swipe_left_coords = None
+        self.swipe_right_coords = None
+
         #preventing detecting unwanted accidental swipe/scroll gestures
         self.last_gesture = None
         self.last_time = 0.0
-        self.repeat_threashold = 0.7
+        self.repeat_threashold = 1.0
 
         self.debug = debug
 
@@ -49,7 +52,7 @@ class GestureClassifier:
             self.last_gesture = gesture
             self.last_time = now
             return True
-        
+ 
     def classify(self, landmarks):
         
         if landmarks is None:
@@ -60,27 +63,32 @@ class GestureClassifier:
         pointing_tip = landmarks.landmark[8]
         middle_tip = landmarks.landmark[12]
         ring_tip = landmarks.landmark[16]
-        
-
+        pinky_tip = landmarks.landmark[20]
+                    
+            
         # --- CLOSE GESTURE ---
-        if self.dist(wrist, middle_tip) < self.close_threshold:
-            if self.debug:
-                print("Close gesture")
+        # if self.dist(wrist, middle_tip) < self.close_threshold:
+        #     if self.debug:
+        #         print("Close gesture")
 
-            return "close"  #later some coce eg -1 for close
+        #     return "close"  #later some coce eg -1 for close
 
         #--- OPEN GESTURE ---
-        if self.dist(pointing_tip,middle_tip) > self.open_threshold and self.dist(middle_tip,ring_tip) > self.open_threshold:
+        if self.dist(pointing_tip,middle_tip) > self.open_threshold  and self.dist(ring_tip,pinky_tip) > self.open_threshold:
             if self.debug:
                 print("Open gesture")
             return "open"
         
+
+
+       
         #---SCROLL DOWN GESTURE---
-        if pointing_tip.y < 0.5:   
+
+        if pointing_tip.y > 0.4 and pointing_tip.y < 0.7:   
             if self.scroll_down_start is None:
                 self.scroll_down_start = time.perf_counter()
 
-        elif pointing_tip.y > 0.5:
+        elif pointing_tip.y > 0.7:
                 if self.scroll_down_start is not None:
                     dt = time.perf_counter() - self.scroll_down_start
                     self.scroll_down_start = None
@@ -89,13 +97,15 @@ class GestureClassifier:
                             if self.debug:
                                 print("Scroll down")
                             return "scroll_down"
-                    
+
+
+
         #---SCROLL UP GESTURE---
-        if pointing_tip.y > 0.5:   
+        if pointing_tip.y < 0.7 and pointing_tip.y > 0.4:   
             if self.scroll_up_start is None:
                 self.scroll_up_start = time.perf_counter()
 
-        elif pointing_tip.y < 0.5:
+        elif pointing_tip.y < 0.4:
                 if self.scroll_up_start is not None:
                     dt = time.perf_counter() - self.scroll_up_start
                     self.scroll_up_start = None
@@ -106,11 +116,11 @@ class GestureClassifier:
                             return "scroll_up"
 
         #---SWIPE LEFT GESTURE---
-        if pointing_tip.x > 0.5:   
+        if pointing_tip.x > 0.7:   
             if self.swipe_left_start is None:
                 self.swipe_left_start = time.perf_counter()
 
-        elif pointing_tip.x < 0.5:
+        elif pointing_tip.x < 0.7 and pointing_tip.x > 0.45:
                 if self.swipe_left_start is not None:
                     dt = time.perf_counter() - self.swipe_left_start
                     self.swipe_left_start = None
@@ -119,7 +129,23 @@ class GestureClassifier:
                             if self.debug:
                                 print("Swipe left")
                             return "swipe_left"
-                    
+
+        
+
+        #---SWIPE RIGHT GESTURE---
+        if pointing_tip.x < 0.3:   
+            if self.swipe_right_start is None:
+                self.swipe_right_start = time.perf_counter()
+
+        elif pointing_tip.x > 0.3 and pointing_tip.x  < 0.55:
+                if self.swipe_right_start is not None:
+                    dt = time.perf_counter() - self.swipe_right_start
+                    self.swipe_right_start = None
+                    if dt < self.scroll_dt:
+                        if(self._gesture_allowed("swipe_right")):
+                            if self.debug:
+                                print("Swipe right")
+                            return "swipe_right"          
         
         
         #if self.debug:

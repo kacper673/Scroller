@@ -4,6 +4,7 @@ import argparse
 from camera import Camera
 from hand_tracker import HandTracker
 from gesture_classifier import GestureClassifier
+from ui_controller import UIController
 
 def main():
 
@@ -28,6 +29,10 @@ def main():
     classifier = GestureClassifier(debug=args.debug)
 
 
+    #---UI CONTROLLER---
+    controller = UIController(debug=args.debug)
+
+
     #---MAIN LOOP---
     while True:
         ok, frame = cam.read(flip=True)
@@ -37,11 +42,16 @@ def main():
         result = tracker.process(frame)
         landmarks = tracker.get_first_hand_landmarks(result)
 
-        classifier.classify(landmarks)
+        gesture = classifier.classify(landmarks)
+        
+        controller.controll(gesture)
         
         #---DEBUG MODE---
         if args.debug:
+            pairs = [(4,8),(8,12),(12,16),(16,20)]
             tracker.draw(frame, result)
+            tracker.draw_fingertip_distances(frame, landmarks,pairs=pairs)
+            tracker.print_last_gesture(frame,gesture)
 
             cv2.imshow("Debug - Hand Tracking", frame)
 

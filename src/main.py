@@ -42,13 +42,13 @@ def main():
         result = tracker.process(frame)
         landmarks = tracker.get_first_hand_landmarks(result)
 
-        gesture = classifier.classify(landmarks)
+        gesture, mouse_coords = classifier.classify(landmarks)
         
-        controller.controll(gesture)
+        controller.controll(gesture,mouse_coords)
         
         #---DEBUG MODE---
         if args.debug:
-            pairs = [(4,8),(8,12),(12,16),(16,20)]
+            pairs = [(0,12),(4,8),(8,12),(12,16),(16,20)]
             tracker.draw(frame, result)
             tracker.draw_fingertip_distances(frame, landmarks,pairs=pairs)
             tracker.print_last_gesture(frame,gesture)
@@ -61,8 +61,6 @@ def main():
 
         # NORMAL MODE (no cam window)
         else:
-            # tutaj obrobisz gesty, sterowanie UI, scrollowanie itp.
-            # ale NIE pokazujemy żadnego okna
             pass
 
     cam.release()

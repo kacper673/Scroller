@@ -41,8 +41,15 @@ class UIController:
                 print("#UIController ", gesture)
             if mouse_coords is not None:
                 screenWidth, screenHeight = pyautogui.size()
-                print(screenWidth,screenHeight)
-                #x +- 40; y +- 60
-                
+                print(screenWidth,screenHeight)                
                 pyautogui.moveTo(mouse_coords.x * screenWidth, mouse_coords.y * screenHeight)
-            
+        
+        elif gesture == "volume_up":
+            if self.debug:
+                print("#UIController ", gesture)
+            pyautogui.press("volumeup")
+
+        elif gesture == "volume_down":
+            if self.debug:
+                print("#UIController ", gesture)
+            pyautogui.press("volumedown")

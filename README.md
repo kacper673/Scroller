@@ -1,7 +1,11 @@
 **UNDER DEVELOPMENT**
 
 
-SIMPLE WINDOWS UI CONTROLLER, using hand gestures. Currently only swipe left/ right and scroll up/down available. Eg swiping photos or scrolling down pdf or IG reels now controled by hand gestures. 
+SIMPLE WINDOWS UI CONTROLLER, using hand gestures. Currently only swipe left/ right, scroll up/down available, close/open and mouse dragging. Eg swiping photos or scrolling down pdf or IG reels now controled by hand gestures. 
+
+**DISCLAIMER**
+Project is NOT finished and is early in test stage - many features do not work fully, eg. mouse dragging is really imprecise and wiggily. Open gesture might trigger some unexpected actions. 
+Be carefull with close gesture now - you can close so much you can turn of your PC
 
 
 **SIMLE tutorial**  
@@ -9,5 +13,13 @@ SIMPLE WINDOWS UI CONTROLLER, using hand gestures. Currently only swipe left/ ri
 for scroll up gesture place your hand in top half of your screen and make a scrolling up with your index finger, for scroll down analogicly in bottom half.
 
 for swipe left gesture place your right hand in right hlaf of the screen and start swiping left with your index finger. Analogicly for swipe left.
+
+for mouse drag you have to hold your index and thumb together
+
+for open you have to open your palm fully
+
+for close you have to close your palm twice rapidly
+
+
 
 **UNFINISHED PROJECT**

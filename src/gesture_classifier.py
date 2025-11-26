@@ -76,14 +76,18 @@ class GestureClassifier:
 
         #---TO ADD---
         # ENTER gest ass thumnb up
-        # MAUSE TRACKING as thumg + index
         # ZOOM IN as middle and thumb gesture
         # ZOOM OUT as pinky and thumb gesture
-    
+        #----------------------------------------------
+
         #in DEV 
         #volume up/down
         #----------------------------------------------
 
+        #DONE
+        # 
+        # MAUSE TRACKING as thumg + index
+        #----------------------------------------------
 
 
         #--- CLOSE GESTURE ---
@@ -198,47 +202,48 @@ class GestureClassifier:
                             return "swipe_right", None          
         
         #---DRAG GESTURE---
-        if self.dist(pointing_tip,thumb_tip) < 0.07:
+        if self.dist(pointing_tip,thumb_tip) < 0.048 and self.dist(middle_tip,ring_tip) < 0.1 and self.dist(ring_tip, pinky_tip) < 0.1:
             if self.debug:
                 print("Drag")
             return "drag", pointing_tip
         
+
+
         #---VOLUME GESTURE---
-        if abs(thumb_tip.y - wrist.y) < 0.1:                    #if thumb and writs is leveled 
-            if self.debug:
-                print("Ready to set volume...")
-            self.vol_beg_pos_thumb = thumb_tip
-            self.vol_beg_pos_writs = wrist
-            self.volume_start = time.perf_counter()
+        if abs(thumb_tip.y - wrist.y) < 0.1 and abs(thumb_tip.y - landmarks.landmark[2].y) < 0.05  and abs(thumb_tip.y - landmarks.landmark[2].y) < 0.05:                  #if thumb and writs is leveled, I additionally use two other then tip points on thumb (2 and 3), described in model documentation
+            if self.volume_start is None:
+                if self.debug:
+                    print("position for seting volume held...")
+                self.vol_beg_pos_thumb = thumb_tip
+                self.vol_beg_pos_writs = wrist
+                self.volume_start = time.perf_counter()
 
         if self.volume_start is not None:
-            if time.perf_counter() - self.volume_start > 1:         #start gesture when levrl postion is held for one second
+            if time.perf_counter() - self.volume_start > 1.8 and abs(thumb_tip.y - wrist.y) < 0.1 and abs(thumb_tip.y - landmarks.landmark[2].y) < 0.05  and abs(thumb_tip.y - landmarks.landmark[2].y) < 0.05:         #start gesture when levrl postion is held for one second
                     self.setting_volume = True
+                    if self.debug:
+                        print("Ready to set volume...")
         
         if self.setting_volume == True:
-            if abs(wrist.y - self.vol_beg_pos_writs.y) < 0.1 and abs(wrist.x - self.vol_beg_pos_writs.x):     #if hand level hasnt moved 
+            if abs(wrist.y - self.vol_beg_pos_writs.y) < 0.1 and abs(wrist.x - self.vol_beg_pos_writs.x) < 0.1:     #if hand level hasnt moved 
                     cos = self.dist(self.vol_beg_pos_thumb,self.vol_beg_pos_writs) / self.dist(thumb_tip, self.vol_beg_pos_writs)   #return angle between cur pos of thumb and const pos of wrist and begin pos of thumb and wrist
-                    if thumb_tip.y < self.vol_beg_pos_thumb.y:        #vol down
-                        if self.debug:
-                            print("Volume up, degree: ",cos)
-                        return "volume_up", cos
-                    if thumb_tip.y > self.vol_beg_pos_thumb.y:        #vol up
-                        if self.debug:
-                            print("Volume down, degree: ",cos)
-                        return "volume_down", cos
+                    if abs(thumb_tip.y - self.vol_beg_pos_thumb.y) > 0.15:
+                        if thumb_tip.y < self.vol_beg_pos_thumb.y:        #vol down
+                            if self.debug:
+                                print("Volume up, degree: ",cos)
+                            return "volume_up", cos
+                        if thumb_tip.y > self.vol_beg_pos_thumb.y:        #vol up
+                            if self.debug:
+                                print("Volume down, degree: ",cos)
+                            return "volume_down", cos
             else:
                 self.setting_volume = False 
+                self.volume_start = None
                     
             #I implemented changing volume by percentege (how much you showed), but later discovered pyautogui cannot change volume by percenetage, so now it changes by defoalt system step :(. Sure, everything works, but mayby later I will consider adding another libary for that
             #It turned out to be pretty accure actually...even though it does use the angle
                 
                     
-                
-
-
-            
-
-
         #if self.debug:
          #   print("No gesture recognised") 
         return None, None

@@ -48,7 +48,7 @@ def main():
         
         #---DEBUG MODE---
         if args.debug:
-            pairs = [((0,12),(4,8),(8,12),(12,16),(16,20))] 
+            pairs = [(0,4),(0,12),(4,8),(8,12),(12,16),(16,20)] 
             tracker.draw(frame, result)
             tracker.draw_fingertip_distances(frame, landmarks,pairs=pairs)
             tracker.print_last_gesture(frame,gesture)

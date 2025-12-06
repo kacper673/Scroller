@@ -90,9 +90,9 @@ The project covers aspects of machine vision and image recognition models, using
 
 ## Installation & Running
 
-pip install opencv-python mediapipe pyautogui
+*pip install opencv-python mediapipe pyautogui*
 
-python main.py --debug
+*python main.py --debug*
 
 Debug mode shows:
 
